@@ -67,7 +67,7 @@ namespace OGAT_HideAndSeek_Mod
             __instance.config.PLEKGMCLICL = 0.5f;
             __instance.config.DMOLKIODAEF = true;
             __instance.config.FDLIEBOMBAK = "Hide & seek";
-            __instance.config.KHPDMLLJJFP = "HnS";
+            __instance.config.KHPDMLLJJFP = "VIP";
             __instance.config.CGHIIEIBFJB = "In this mode, there are two teams Hiders and Seekers";
             GameMode.HJCKCFECIJA config = __instance.config;
             config.CGHIIEIBFJB += "\n\nThe objective of this game for the Seekers to kill all Hiders. However, if you are a seeker, you objective is to hide until time runs out. ";
@@ -135,8 +135,18 @@ namespace OGAT_HideAndSeek_Mod
                 __instance.avatar_overlay.gameObject.SetActive(true);
 
                 __instance.KCDANMPACMD();
-                __instance.GGDNOHEGMGH = true;
-                __instance.setUsableClass(VipClass);
+
+                if (NetPlayer.Mine.GGOBEEOMBGG == IDJNNEJNMMO.Red)
+                {
+                    __instance.GGDNOHEGMGH = true;
+                    __instance.setUsableClass(VipClass);
+                }
+                else
+                {
+                    __instance.NEAFMMOJLAH();
+                    __instance.GLIKEMJDBPB();
+                    __instance.DIBIGLFNAIN();
+                }
 
                 return false;
             }
