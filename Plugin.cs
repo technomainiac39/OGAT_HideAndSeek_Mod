@@ -67,7 +67,7 @@ namespace OGAT_HideAndSeek_Mod
             __instance.config.PLEKGMCLICL = 0.5f;
             __instance.config.DMOLKIODAEF = true;
             __instance.config.FDLIEBOMBAK = "Hide & seek";
-            __instance.config.KHPDMLLJJFP = "VIP";
+            __instance.config.KHPDMLLJJFP = "HnS";
             __instance.config.CGHIIEIBFJB = "In this mode, there are two teams Hiders and Seekers";
             GameMode.HJCKCFECIJA config = __instance.config;
             config.CGHIIEIBFJB += "\n\nThe objective of this game for the Seekers to kill all Hiders. However, if you are a seeker, you objective is to hide until time runs out. ";
@@ -202,7 +202,7 @@ namespace OGAT_HideAndSeek_Mod
         public static bool OnPlayerDeath(Mode_VIP __instance, NetPlayer LIKDOCJJCBO, NetPlayer GPHOKCNEPPC)
         {
             List<NetPlayer> redPlayers = __instance.NDKACENNHIL();
-            if (redPlayers.Count == 1 && GPHOKCNEPPC.GGOBEEOMBGG == IDJNNEJNMMO.Red) 
+            if (redPlayers.Count == 1 && GPHOKCNEPPC.GGOBEEOMBGG == IDJNNEJNMMO.Red)
             {
                 __instance.vip = redPlayers[0];
 
@@ -240,7 +240,7 @@ namespace OGAT_HideAndSeek_Mod
                 KLEPJCJNCIJ.BPIFHLOBCLE((double)GPHOKCNEPPC.NetId),
                 KLEPJCJNCIJ.BPIFHLOBCLE((double)IDJNNEJNMMO.Blue)
 });
-                SGNet.SendSystemChatMsg(IDJNNEJNMMO.All,I18n.Source("{0} has become a seeker"), new string[]
+                SGNet.SendSystemChatMsg(IDJNNEJNMMO.All, I18n.Source("{0} has become a seeker"), new string[]
                 {
                 GPHOKCNEPPC.profile.username,
                 });
@@ -250,14 +250,17 @@ namespace OGAT_HideAndSeek_Mod
                 __instance.GBCLBOJOEBA(IDJNNEJNMMO.Blue, B_message, null);
                 __instance.ACHKDONBLHJ(IDJNNEJNMMO.Blue, B_message, null, string.Empty);
 
-                //shows class selection stuff
-                Singleton<ClassSelection>.I.Show();
+                //shows class selection stuff if you are the one who died
+                if (GPHOKCNEPPC == NetPlayer.Mine) 
+                { 
+                    Singleton<ClassSelection>.I.Show();
 
-                Singleton<ClassSelection>.I.selectedClassId = __instance.vip_class.GetClassId();
-                Singleton<ClassSelection>.I.selectedClassSkinId = ClassSelection.LOMMDIOPLKA((int)__instance.vip_class.GetClassId());
-                Singleton<ClassSelection>.I.KCDANMPACMD();
-                Singleton<ClassSelection>.I.GLIKEMJDBPB();
-                Singleton<ClassSelection>.I.DIBIGLFNAIN();
+                    Singleton<ClassSelection>.I.selectedClassId = __instance.vip_class.GetClassId();
+                    Singleton<ClassSelection>.I.selectedClassSkinId = ClassSelection.LOMMDIOPLKA((int)__instance.vip_class.GetClassId());
+                    Singleton<ClassSelection>.I.KCDANMPACMD();
+                    Singleton<ClassSelection>.I.GLIKEMJDBPB();
+                    Singleton<ClassSelection>.I.DIBIGLFNAIN();
+                }
             }
             else
             {
