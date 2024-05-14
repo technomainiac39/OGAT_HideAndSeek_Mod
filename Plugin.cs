@@ -54,11 +54,11 @@ namespace OGAT_HideAndSeek_Mod
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Mode_VIP), "gm_LoadConfig")]
-        public static bool LoadCustomGameConfig(Mode_VIP __instance)
+        public static bool LoadCustomGameConfig(Mode_VIP __instance)        //loads all of the custom configs instead of the default ones
         {
             __instance.config = new GameMode.HJCKCFECIJA();
-            __instance.config.KHEAJNIDEEO = GameMode.APMCPNJHDOK.COMPETITIVE;
-            __instance.config.EPJPDICMEMG = false;
+            __instance.config.KHEAJNIDEEO = GameMode.APMCPNJHDOK.COMPETITIVE;   //apparently there is a fun gamemode ??
+            __instance.config.EPJPDICMEMG = false;  //still no clue what these are for
             __instance.config.PAKJCKDPCPI = false;
             __instance.config.EDBOAIJDGIK = false;
             __instance.config.IJABMNADOGJ = true;
@@ -67,7 +67,7 @@ namespace OGAT_HideAndSeek_Mod
             __instance.config.PLEKGMCLICL = 0.5f;
             __instance.config.DMOLKIODAEF = true;
             __instance.config.FDLIEBOMBAK = "Hide & seek";
-            __instance.config.KHPDMLLJJFP = "VIP";
+            __instance.config.KHPDMLLJJFP = "VIP";  //you cant change this part of config because OGAT checks for each of the game modes short names and will crash if it doesnt find them
             __instance.config.CGHIIEIBFJB = "In this mode, there are two teams Hiders and Seekers";
             GameMode.HJCKCFECIJA config = __instance.config;
             config.CGHIIEIBFJB += "\n\nThe objective of this game for the Seekers to kill all Hiders. However, if you are a seeker, you objective is to hide until time runs out. ";
@@ -83,7 +83,7 @@ namespace OGAT_HideAndSeek_Mod
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Mode_VIP), "gm_OnInit")]
-        public static bool OnCustomGameInit(Mode_VIP __instance)
+        public static bool OnCustomGameInit(Mode_VIP __instance)        //sets all of the spawn stuff and also steals the VIP class
         {
             Match i = Singleton<Match>.I;
             i.respawnTime_blue.val = 13f;
@@ -107,7 +107,7 @@ namespace OGAT_HideAndSeek_Mod
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Mode_VIP), "S_onMatchStart")]
-        public static bool OnMatchStart(Mode_VIP __instance)
+        public static bool OnMatchStart(Mode_VIP __instance)    //called when a match begins
         {
             __instance.BDEBLBJKCDF();   //is what the base.method calls
             __instance.vip = null;
@@ -129,16 +129,16 @@ namespace OGAT_HideAndSeek_Mod
             if (Singleton<Match>.I.GetGameModeIndex() == 2) //checks if game mode is VIP or not
             { 
 
-                __instance.GGDNOHEGMGH = true;
+                __instance.GGDNOHEGMGH = true;                          //turns on all of the UI stuff
                 __instance.AGLMLJACABD.gameObject.SetActive(true);
                 __instance.OMKHKJBFPNG.gameObject.SetActive(true);
                 __instance.avatar_overlay.gameObject.SetActive(true);
 
-                __instance.KCDANMPACMD();
+                __instance.KCDANMPACMD();   //also turns on the UI and I think renders it too
 
-                if (NetPlayer.Mine.GGOBEEOMBGG == IDJNNEJNMMO.Red)
+                if (NetPlayer.Mine.GGOBEEOMBGG == IDJNNEJNMMO.Red)      //restricts class if red team but doesnt seem to be working 
                 {
-                    __instance.GGDNOHEGMGH = true;
+                    __instance.GGDNOHEGMGH = true;                              /////////////////////////////////////////////////////////////////
                     __instance.setUsableClass(VipClass);
                 }
                 else
@@ -155,7 +155,7 @@ namespace OGAT_HideAndSeek_Mod
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Mode_VIP), "S_onPlayerConnected")]
-        public static void OnPLayerConnected(Mode_VIP __instance, NetPlayer MFJOABACBHP)
+        public static void OnPLayerConnected(Mode_VIP __instance, NetPlayer MFJOABACBHP)    //just to make sure there is no VIP though it isnt really needed since on death is altered
         {
             __instance.vip = null;
         }
@@ -197,12 +197,26 @@ namespace OGAT_HideAndSeek_Mod
         [HarmonyPatch(typeof(Mode_VIP), "S_onMatchTimeout")]
         public static bool OnTimeUp(Mode_VIP __instance, out bool CAHBHNFBEGJ, out bool JKBJAFMIPOP)
         {
-            CAHBHNFBEGJ = false;    //think this is blue and red team win bool (the false one is blue team)
-            JKBJAFMIPOP = true;
+            List<NetPlayer> redPlayers = __instance.NDKACENNHIL();
+            if (redPlayers.Count != 0)
+            {
+                CAHBHNFBEGJ = false;    //think this is blue and red team win bool (the false one is blue team)
+                JKBJAFMIPOP = true;
 
-            Singleton<Match>.I.nWin_red.val++;
-            SGNet.I.BroadcastPlayerStats();
-            SGNet.SendSystemChatMsg(IDJNNEJNMMO.All, I18n.Source("The Hiders survived !!!"), new string[0]);
+                Singleton<Match>.I.nWin_red.val++;
+                SGNet.I.BroadcastPlayerStats();
+                SGNet.SendSystemChatMsg(IDJNNEJNMMO.All, I18n.Source("The Hiders survived !!!"), new string[0]);
+
+            }
+            else                        //this sets blue team to win because ogat is funky in how it triggers wins
+            {
+                CAHBHNFBEGJ = true;     //this one I think sets the winning team
+                JKBJAFMIPOP = true;     //this one always needs to be true
+
+                Singleton<Match>.I.nWin_blue.val++;
+                SGNet.I.BroadcastPlayerStats();
+                SGNet.SendSystemChatMsg(IDJNNEJNMMO.All, I18n.Source("The Seekers win !!!"), new string[0]);
+            }
 
             return false;
         }
@@ -214,13 +228,12 @@ namespace OGAT_HideAndSeek_Mod
             List<NetPlayer> redPlayers = __instance.NDKACENNHIL();
             if (redPlayers.Count == 1 && GPHOKCNEPPC.GGOBEEOMBGG == IDJNNEJNMMO.Red)
             {
-                __instance.vip = redPlayers[0];
-
-                SGNet.send_to_all(HFKPNENBLJI.BIAHLPPBCIC, new KLEPJCJNCIJ[]
+                SGNet.send_to_all(HFKPNENBLJI.FDMNENNBHKB, new KLEPJCJNCIJ[]
                 {
-                    KLEPJCJNCIJ.BPIFHLOBCLE((double)LIKDOCJJCBO.NetId),
-                    KLEPJCJNCIJ.BPIFHLOBCLE((double)GPHOKCNEPPC.NetId)
+                    KLEPJCJNCIJ.BPIFHLOBCLE((double)GPHOKCNEPPC.NetId),
+                    KLEPJCJNCIJ.BPIFHLOBCLE((double)IDJNNEJNMMO.Blue)
                 });
+                SGNet.send_to_all(HFKPNENBLJI.OPINPPIFLLA, new KLEPJCJNCIJ[] {KLEPJCJNCIJ.BPIFHLOBCLE((double)IDJNNEJNMMO.Blue)});
             }
             else if (GPHOKCNEPPC.GGOBEEOMBGG == IDJNNEJNMMO.Red)
             {
@@ -246,10 +259,10 @@ namespace OGAT_HideAndSeek_Mod
 
                 //swaps teams
                 SGNet.send_to_all(HFKPNENBLJI.FDMNENNBHKB, new KLEPJCJNCIJ[]
-{
-                KLEPJCJNCIJ.BPIFHLOBCLE((double)GPHOKCNEPPC.NetId),
-                KLEPJCJNCIJ.BPIFHLOBCLE((double)IDJNNEJNMMO.Blue)
-});
+                {
+                    KLEPJCJNCIJ.BPIFHLOBCLE((double)GPHOKCNEPPC.NetId),
+                    KLEPJCJNCIJ.BPIFHLOBCLE((double)IDJNNEJNMMO.Blue)
+                });
                 SGNet.SendSystemChatMsg(IDJNNEJNMMO.All, I18n.Source("{0} has become a seeker"), new string[]
                 {
                 GPHOKCNEPPC.profile.username,
@@ -261,8 +274,8 @@ namespace OGAT_HideAndSeek_Mod
                 __instance.ACHKDONBLHJ(IDJNNEJNMMO.Blue, B_message, null, string.Empty);
 
                 //shows class selection stuff if you are the one who died
-                if (GPHOKCNEPPC == NetPlayer.Mine) 
-                { 
+                if (GPHOKCNEPPC == NetPlayer.Mine)
+                {
                     Singleton<ClassSelection>.I.Show();
 
                     Singleton<ClassSelection>.I.selectedClassId = __instance.vip_class.GetClassId();
